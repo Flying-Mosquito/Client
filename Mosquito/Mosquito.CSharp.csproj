@@ -87,13 +87,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\2 Script\Common\CollisionManager.cs" />
+    <Compile Include="Assets\2 Script\Common\Constants.cs" />
     <Compile Include="Assets\2 Script\Common\GameManager.cs" />
     <Compile Include="Assets\2 Script\Common\Loading.cs" />
     <Compile Include="Assets\2 Script\Common\Singleton.cs" />
     <Compile Include="Assets\2 Script\Common\Value.cs" />
     <Compile Include="Assets\2 Script\Common\WallCtr.cs" />
     <Compile Include="Assets\2 Script\Common\temp.cs" />
-    <Compile Include="Assets\2 Script\Common\temp_tail.cs" />
     <Compile Include="Assets\2 Script\MyGizimo.cs" />
     <Compile Include="Assets\2 Script\Scene\00 Logo\Logo.cs" />
     <Compile Include="Assets\2 Script\Scene\01 MainMenu\StageObject.cs" />
@@ -101,6 +101,8 @@
     <Compile Include="Assets\2 Script\Scene\Object\FrogCtrl.cs" />
     <Compile Include="Assets\2 Script\Scene\Object\FrogTongue.cs" />
     <Compile Include="Assets\2 Script\Scene\Object\Player.cs" />
+    <Compile Include="Assets\2 Script\Scene\Object\RainDrop.cs" />
+    <Compile Include="Assets\2 Script\Scene\Object\RainZone.cs" />
     <Compile Include="Assets\Demigiant\DOTweenPro\DOTweenAnimation.cs" />
   </ItemGroup>
   <ItemGroup>
