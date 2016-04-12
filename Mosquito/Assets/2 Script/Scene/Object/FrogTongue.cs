@@ -52,45 +52,40 @@ public class FrogTongue : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-     
             MoveTongue();
 	}
 
     private void MoveTongue()
     {
+        child_tr.rotation = Quaternion.LookRotation(vDir);  // 혀 메쉬를 방향벡터의 방향으로 회전 
+        if (bMove && isMove)  
+        {
+            if (bSwallow)
+                x -= fSpeed;
+            if( !bSwallow)
+                x += fSpeed;
 
-        if (vDir != Vector3.zero)
-            child_tr.rotation = Quaternion.LookRotation(vDir);  // 혀 메쉬를 방향벡터의 방향으로 회전 
+            if (x >= fLength)   // 길이가 최대길이보다 커지면 삼켜야함
+                bSwallow = true;
 
-            if (bMove && isMove)
+            if (x <= 0f)
             {
-                if (bSwallow)
-                    x -= fSpeed;
-                if (!bSwallow)
-                    x += fSpeed;
-
-                if (x >= fLength)   // 길이가 최대길이보다 커지면 삼켜야함
-                    bSwallow = true;
-
-                if (x <= 0f)
-                {
-                    bMove = false;
-                    bSwallow = false;
-                    bIdle = true;
-                    StartCoroutine("ChangeMoveState");
-                }
-
-
+                bMove = false;
+                bSwallow = false;
+                bIdle = true;
+                StartCoroutine("ChangeMoveState");
             }
-            child_tr.localScale = new Vector3(0.2f, 0.2f, x);
-        
+         
+               
+        }
+        child_tr.localScale = new Vector3(0.2f, 0.2f, x);
     }
 
     IEnumerator ChangeMoveState()
     {
         isMove = false;
         yield return new WaitForSeconds(0.5f);
-        //print("ChangeMoveState");
+        print("ChangeMoveState");
        
     }
 
