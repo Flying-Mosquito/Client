@@ -3,7 +3,7 @@ using System.Collections;
 using DG.Tweening;
 
 public class FollowCam : MonoBehaviour {
-    public Player _Player;
+    public PlayerCtrl _Player;
 
     private Transform   tr;
     public  Transform   targetTr;
@@ -29,13 +29,18 @@ public class FollowCam : MonoBehaviour {
     {
        
 
-        tr          = GetComponent<Transform>();
-        fDist       = 1f;
-        fHeight     = 0.4f;
-        fDampTrace  = 20.0f;
+
+    }
+	void Start () {
+
+        tr = GetComponent<Transform>();
+        fDist = 1f;
+        fHeight = 0.4f;
+        fDampTrace = 20.0f;
 
         // 카메라를 상하좌우로 흔들기 위한 캐릭터 기울기값
-        _Player = GameObject.Find("Player").GetComponent<Player>();
+        _Player = GameObject.Find("Player").GetComponent<PlayerCtrl>();// PlayerCtrl.Instance;//GameManager.Instance.PlayerCtrl;//GameObject.Find("Player").GetComponent<Player>();
+
         Target_fXAngle = _Player.fXAngle;
         Target_fYAngle = _Player.fYAngle;
         Target_fSpeed = _Player.fSpeed;
@@ -43,9 +48,6 @@ public class FollowCam : MonoBehaviour {
         FirstLocalPosition = tr.localPosition;
         fPower = _Player.fSpeed;
         fX = 0f;
-
-    }
-	void Start () {  
     }
     void Update()
     {

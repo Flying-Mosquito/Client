@@ -3,7 +3,7 @@ using System.Collections;
 
 
 public class FrogCtrl : MonoBehaviour {
-    public Player _Player;
+    public PlayerCtrl _Player;
 
     private GameObject _Cube;
     private GameObject _Tongue;
@@ -22,7 +22,7 @@ public class FrogCtrl : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
-        _Player = GameObject.Find("Player").GetComponent<Player>();
+        _Player = GameObject.Find("Player").GetComponent<PlayerCtrl>(); //PlayerCtrl.Instance;// 
         tr = GetComponent<Transform>();
 
         //temp

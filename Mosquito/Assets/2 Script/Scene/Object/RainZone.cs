@@ -5,9 +5,9 @@ using System.Collections.Generic;   // List 사용을 위해 추가
 // Trigger, RainDrop들을 생성하고 List를 가지고 있다.
 public class RainZone : MonoBehaviour {
 
-    private Player _Player;
+    private PlayerCtrl _Player;
     public GameObject RainDropPrefab;
-    private int iMaxRainDrop = 1; // 풀에 넣을 빗방울 수    
+    private int iMaxRainDrop = 15; // 풀에 넣을 빗방울 수    
     public List<GameObject> raindropList = new List<GameObject>();
     private Transform[] rainPoints;
     private float fTime;
@@ -16,8 +16,8 @@ public class RainZone : MonoBehaviour {
     void Awake()
     {
         // RainDropPrefab = Resources.Load("RainDrop");//.Find("RainDrop"); // 로드에 문제있으면 이거 찾아봐야돼ㅠㅠ
-        
-        _Player = GameObject.Find("Player").GetComponent<Player>();
+
+        _Player = GameObject.Find("Player").GetComponent<PlayerCtrl>(); //PlayerCtrl.Instance;//
         rainPoints = gameObject.GetComponentsInChildren<Transform>();
 
         for (int i = 0; i < iMaxRainDrop; ++i)  // 풀에넣을 빗방울들을 만들고 리스트에 넣어줌 

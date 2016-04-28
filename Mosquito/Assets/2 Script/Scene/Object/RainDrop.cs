@@ -36,8 +36,6 @@ public class RainDrop : MonoBehaviour {
 
     void FixedUpdate()
     {
-    
-
         transform.Translate(vGravity * Time.fixedDeltaTime);
         
         //  rigidBody.MovePosition(transform.position + ( vGravity * Time.fixedDeltaTime));
@@ -46,26 +44,8 @@ public class RainDrop : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-     //  transform.Translate(vGravity * Time.deltaTime);
-     //   print("RainDrop Velocity : " + rigidBody.velocity.x + ", " + rigidBody.velocity.y + ", " + rigidBody.velocity.z);
-   
     }
-
-    /*
-     void OnTriggerEnter(Collider coll)
-    {
-        //if ( "PLAYER" == coll.gameObject.tag )
-       // {
-              // bCheck가 안들어간 이유는 OnTriggerEnter에 들어왔다는 것 자체가 bCheck == true라는 소리 
-            if ( isCollision)            //  (bCheck && isCollision)플레이어의 타겟이면서 이미 충돌한 상태라면 ( 중력이 적용되지 않는 상태 - 정지상태 )
-            {
-                
-                col.isTrigger = false;
-                StartCoroutine("Late_SetActiveFalse");
-            }
-       // }
-    }
-    */
+    
     void OnCollisionEnter(Collision coll)
     {
         if ("RAINDROP" == coll.gameObject.tag)
@@ -81,29 +61,6 @@ public class RainDrop : MonoBehaviour {
             }
             else                                        // 플레이어 아닌 다른 물체와 부딪히면       
             {
-               // isCollision = true;                     // 다른 물체에 충돌했음을 알리는 변수 - 필요한가?
-
-                /* if (bCheck)                              // 플레이어가 타겟으로 삼았다면 빗방울이 장애물에 쳐박혔을 시 그 자리에 있게 한다 
-                 {
-                     // rigidBody.useGravity = false;
-                     //rigidBody.velocity = Vector3.zero;
-                     col.isTrigger = true;
-                     rigidBody.isKinematic = true;
-                     print("트리거트루, 키네매틱트루 ");
-                     vGravity = new Vector3(0f, 0f, 0f);
-
-
-                     //여기에 투명처리 
-                 }
-                 else
-                 {
-                     print("셋엑티브폴스");
-                     Change_CheckState(false);       // 곧 Active가 바뀔거니가 플레이어까 클릭한 것을 해제 , 원상태로 돌아갑니다
-                     isCollision = false;
-                     gameObject.SetActive(false);
-
-                     vGravity = new Vector3(0f, -9.8f, 0f);
-                 }*/
                 isPlop = true;
                 StartCoroutine("Plop");
                 
@@ -153,4 +110,5 @@ public class RainDrop : MonoBehaviour {
         //vGravity = new Vector3(0f, -9.8f * 0.01f, 0f);
     }
     */
+
 }

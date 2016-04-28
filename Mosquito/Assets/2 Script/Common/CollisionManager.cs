@@ -118,12 +118,6 @@ public class CollisionManager : Singleton<CollisionManager>
                                                                    //  print("vDir Length = " + Vector3.Distance(_Player.transform.position, tr.position).ToString());
         vDir.Normalize();
 
-        /*
-         if (Physics.Raycast(_Obj.transform.position, _Obj.transform.forward, out hit, _fDist))
-            if( hit.collider.tag == _Tag)
-        */
-        //Debug.Log("Angle : " + Vector3.Angle(tr.forward , vDir).ToString());
-
         if (Physics.Raycast(_trPoint.transform.position, vDir, out hit, _fLength) && (Vector3.Angle(_trPoint.forward, vDir) < _fAngle))   // 범위안에 들어와 있으면서, 각도가 40보다 작다
         {
             //  Debug.Log("들어옴");
