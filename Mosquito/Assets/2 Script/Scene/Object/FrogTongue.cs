@@ -5,7 +5,7 @@ using System.Collections;
 // Tongue는 TongeObject를 가지고 있다.
 public class FrogTongue : MonoBehaviour {
 
-    private Transform tr;
+    //private Transform tr;
     private Transform child_tr;
 
     public bool bSwallow;   // 뻗는 상태인지, 삼키는 상태인지
@@ -35,7 +35,7 @@ public class FrogTongue : MonoBehaviour {
 
     void Awake()
     {
-        tr = GetComponent<Transform>();
+        //tr = GetComponent<Transform>();
         child_tr = GetComponentInChildren<Transform>();
         fLength = 30f;
         bSwallow = false;   

@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// 이름 바꿔줘야함 Player를 지워..
 public class PlayerTimescaleCtrl : MonoBehaviour {
 
-    private Transform tr;
+    //private Transform tr;
     // Use this for initialization
     void Awake () {
-        tr = GetComponent<Transform>();
+     //   tr = GetComponent<Transform>();
 	}
 
 	

@@ -5,7 +5,7 @@ using System.Collections;
 public class FrogCtrl : MonoBehaviour {
     public PlayerCtrl _Player;
 
-    private GameObject _Cube;
+    //private GameObject _Cube;
     private GameObject _Tongue;
     private Transform  _TongueTr;
     //private float x;
@@ -26,7 +26,7 @@ public class FrogCtrl : MonoBehaviour {
         tr = GetComponent<Transform>();
 
         //temp
-        _Cube = GameObject.Find("Cube");
+        //_Cube = GameObject.Find("Cube");
         _TongueTr = tr.transform.FindChild("Tongue");   // 자식으로 가진 Tongue의 Transform을 가져오기 위해 사용 
         _Tongue = _TongueTr.gameObject;                 //
         //_Tongue = GameObject.Find("Tongue");

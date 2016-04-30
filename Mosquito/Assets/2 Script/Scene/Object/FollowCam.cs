@@ -2,6 +2,8 @@
 using System.Collections;
 using DG.Tweening;
 
+
+// 플레이어가 전역으로 바뀌었기 때문에 컴퍼넌트 필요 없으니 수정이 필요함 
 public class FollowCam : MonoBehaviour {
     public PlayerCtrl _Player;
 
@@ -87,7 +89,7 @@ public class FollowCam : MonoBehaviour {
      public void Shake_Camera()
      {
         // 충격관련된 수학 - 아마 sin cos
-        if (_Player.isConfused) // 플레이어가 Confused 상태라면 흔들어주세요 ( 충돌 후 ) 
+        if ( (PlayerCtrl.Instance.variable & Constants.BV_Confused) > 0)//_Player.isConfused) // 플레이어가 Confused 상태라면 흔들어주세요 ( 충돌 후 ) 
         {
             fX += 0.1f;
             // 여기서 흔들흔들

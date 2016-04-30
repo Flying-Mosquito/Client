@@ -30,14 +30,11 @@ public class GameManager : Singleton<GameManager> {
 
        // Init_Singleton();
 	}
-
- 
     
     void Init_Singleton()
     {
         // 싱글톤 미리 할당
       //  CollisionManager.Instance.Init();
     }
-	
 
 }

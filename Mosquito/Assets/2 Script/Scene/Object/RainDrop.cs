@@ -6,10 +6,8 @@ using System.Collections;
 // 이펙트같은것들을 추가로 넣어야 한다 . 
 public class RainDrop : MonoBehaviour {
 
-
     private Rigidbody rigidBody;
-    private Collider col;
-
+    //private Collider col;
     public bool bCheck;//{ get; private set; } // 플레이어가 타겟으로 삼았는지 아닌지에 대한 변수 
     public bool isPlop;  // 플레이어가 매달릴 수 있는지 없는지의 유무 .  플레이어가 부모-자식관계를 해제하게 한다
    // public bool isCollision;// { get; private set; }   // 플레이어 아닌 사물들에 충돌했는지에 대한 변수
@@ -19,7 +17,7 @@ public class RainDrop : MonoBehaviour {
     void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
-        col = GetComponent<Collider>();
+        //col = GetComponent<Collider>();
         bCheck = false;
         rigidBody = GetComponent<Rigidbody>();
         vGravity = new Vector3(0f, -9.8f, 0f);
