@@ -11,7 +11,6 @@ public class FollowCam : MonoBehaviour {
     private float Target_fXAngle;    // 카메라를 좌우로 흔들기 위한 값
     public float Target_fYAngle;    // 카메라를 상하로 흔들기 위한 값 (?)이게 필요한가 
     public float Target_fSpeed;
-    private bool Target_isBoost;
 
     public float        fDist;
     public float        fHeight;
@@ -65,26 +64,9 @@ public class FollowCam : MonoBehaviour {
         Target_fXAngle = _Player.fXAngle;
         Target_fYAngle = _Player.fYAngle;
         // Target_fSpeed = Player.fSpeed;
-
-       // if (Target_isBoost = Player.isBoost)
-       // {
+        
             Target_fSpeed = _Player.fSpeed * 0.08f;
-           // Debug.Log("부스터임 : " + Target_fSpeed.ToString());
-       // }
-     /*   else
-        {
-            Target_fSpeed = 0;
-            Debug.Log("부스터가 아님 : " + Target_fSpeed.ToString());
-        }
-        */
-
-    
-
-        // Debug.Log(Target_isBoost);
-        //  Debug.Log(Target_fSpeed.ToString());
-
-
-        //Debug.Log(Player.isBoost.ToString() + ", " + Target_fSpeed.ToString());
+ 
         tr.position = Vector3.Lerp(tr.position, (targetTr.position + (-targetTr.forward * fDist )) + (targetTr.up * fHeight), fDampTrace * Time.deltaTime);
         Move_RightLeft();     // 카메라효과 - 좌우로 움직이기 
         Shake_Camera();

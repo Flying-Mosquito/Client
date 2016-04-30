@@ -70,17 +70,21 @@ public class CollisionManager : Singleton<CollisionManager>
 
         // _tag가 있으면 레이어 비교, _tag가 없으면 그냥 Raycast
         if ("" != _tag)
+        {
             bRaycast = Physics.Raycast(ray, out hit, _fDist, 1 << LayerMask.NameToLayer(_tag));
+        }
         else
+        {
             bRaycast = Physics.Raycast(ray, out hit, _fDist);
+        }
 
         if (!bRaycast)  // bRaycast가 false면 null 리턴 
             return null;
-
-        if (hit.collider.tag == _tag)
+        
+        //else if (hit.collider.tag == _tag)
             return hit.collider.gameObject;
 
-        return null;
+       // return null;
     }
 
     public bool Check_RayHit(Component _Obj, string _Tag, float _fDist = 0) // _Obj의 forward방향, _fDist길이 만큼 만든 Ray가 충돌한 충돌체가 _Tag이름과 같다면 true리턴
