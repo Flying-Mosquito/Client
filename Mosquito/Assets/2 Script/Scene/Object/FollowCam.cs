@@ -42,6 +42,7 @@ public class FollowCam : MonoBehaviour {
         // 카메라를 상하좌우로 흔들기 위한 캐릭터 기울기값
         _Player = PlayerCtrl.Instance;//GameObject.Find("Player").GetComponent<PlayerCtrl>();// PlayerCtrl.Instance;//GameManager.Instance.PlayerCtrl;//GameObject.Find("Player").GetComponent<Player>();
 
+      
         Target_fXAngle = _Player.fXAngle;
         Target_fYAngle = _Player.fYAngle;
         Target_fSpeed = _Player.fSpeed;
@@ -57,8 +58,8 @@ public class FollowCam : MonoBehaviour {
         //   Debug.DrawRay(targetPlus.transform.position, -targetPlus.forward * 100.0f, Color.green);
         //targetPlus.localPosition = targetTr.forward * 1.0f;
         //targetPlus.position = targetTr.transform.position + (tr.forward ) * 10.0f;
-      
-      
+     //   print("ANgle xy : " + _Player.fXAngle + ", " + _Player.fYAngle);
+
     }
 	
 	// 타깃이 움직인 이후에 움직여야 하기 때문에 LateUpdate()
@@ -89,7 +90,7 @@ public class FollowCam : MonoBehaviour {
      public void Shake_Camera()
      {
         // 충격관련된 수학 - 아마 sin cos
-        if ( (PlayerCtrl.Instance.variable & Constants.BV_Confused) > 0)//_Player.isConfused) // 플레이어가 Confused 상태라면 흔들어주세요 ( 충돌 후 ) 
+        if ( (PlayerCtrl.Instance.variable & Constants.BV_bStun) > 0)//_Player.isConfused) // 플레이어가 Confused 상태라면 흔들어주세요 ( 충돌 후 ) 
         {
             fX += 0.1f;
             // 여기서 흔들흔들

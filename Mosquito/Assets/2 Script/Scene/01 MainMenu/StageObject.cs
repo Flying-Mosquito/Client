@@ -15,9 +15,9 @@ public class StageObject : MonoBehaviour {
         if ( Input.GetMouseButtonDown(0))
         {
             bool bCheck = CollisionManager.Instance.Check_MouseCollision(col);
-
+          
             // 선택됐다면 씬 변경, ID가 있어서 씬 선택을 하게 될거야
-            if(bCheck)
+            if (bCheck)
             {
                GameManager.Instance.GetComponent<Loading>().StartCoroutine("StartLoad", "Stage" + stageNum.ToString()) ;
             }

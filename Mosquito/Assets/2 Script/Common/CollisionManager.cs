@@ -12,15 +12,11 @@ public class CollisionManager : Singleton<CollisionManager>
 
     public bool Check_MouseCollision(Component _Obj) // 마우스 클릭시 충돌체가 있다면 true리턴 
     {
-        
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-     //   Debug.DrawRay(ray.origin, ray.direction, Color.green); // 여기서 해도 안보여요 
-
-        Physics.Raycast(ray, out hit, 2000.0f);
-        
-        if(hit.collider == _Obj.GetComponent<Collider>())
+        //   Debug.DrawRay(ray.origin, ray.direction, Color.green); // 여기서 해도 안보여요 
+        Physics.Raycast(ray, out hit, 2000.0f,  ~(1 << LayerMask.NameToLayer("PLAYER")));
+        if (hit.collider == _Obj.GetComponent<Collider>())
             return true;
-
         return false;
     }
     public bool Check_MouseCollision(string _tag , float _fDist = 2000f) // 마우스 클릭시 충돌체가 있다면 true리턴 
@@ -28,7 +24,7 @@ public class CollisionManager : Singleton<CollisionManager>
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         //   Debug.DrawRay(ray.origin, ray.direction, Color.green); // 여기서 해도 안보여요 
 
-        Physics.Raycast(ray, out hit, _fDist);
+        Physics.Raycast(ray, out hit, _fDist );
         if (null == _tag || null == hit.collider)
             return false;
         

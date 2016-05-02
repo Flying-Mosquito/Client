@@ -66,7 +66,7 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
 
 
         state = Constants.ST_IDLE;//ST_CLING;
-        variable = Constants.BV_CheckBoost | Constants.BV_Stick | Constants.BV_IsCanSlow ;
+        variable = Constants.BV_bBoost | Constants.BV_Stick | Constants.BV_IsCanSlow ;
 
         //bCheckBoost = true;
         //bCling = false;
@@ -96,6 +96,8 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
     {
 
         Move();
+
+     
     }
 
     void Update()
@@ -104,18 +106,25 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
         Action();
         RotateAnimation();  // 플레이어 몸체 회전효과
         rigidBody.velocity = Vector3.zero;  // 이것도 해제해야 할 거야 
-
-        print("fStamina : " + fStamina);
       // print("STATE : " + state); // 플레이어 상태확인 
     }
 
 
     private void KeyInput()     // StateCheck 로 이름을 바꾸자..
     {
-        state = Constants.ST_FLYING;
+        //# if UNITY_IOS
+        //  fXAngle = Input.acceleration.x * 1.5f;      // fYRotation : 좌우 각도 변경  
+        // fYAngle = -(Input.acceleration.y * 1.5f) - 0.5f;    // fXRotatino : 상하 각도 변경 , 0.4 는 각도 좀더 세울수 있게 마이너스 한것      
+        //  #else
+        fXAngle = Input.GetAxis("Horizontal");
+        fYAngle = Input.GetAxis("Vertical");
+        //#endif
 
-        if ((variable & Constants.BV_IsCling) > 0  )//isCling)
-            state = Constants.ST_CLING;
+        if ((-0.15f < fXAngle) && (fXAngle < 0.15f))
+            fXAngle = 0f;
+        if ((-0.1f < fYAngle) && (fYAngle < 0.15f))
+            fYAngle = 0f;
+        //  tr.Rotate((Vector3.up * fYRotation * Time.deltaTime * fRotSpeed) + (tr.right * -fXRotation * Time.deltaTime * fRotSpeed) , Space.World);
 
         ///////////////////////////////////////////////// 마우스왼쪽 클릭
         if (Input.GetMouseButton(0))
@@ -161,7 +170,8 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
 
         if( Input.GetKey(KeyCode.Space))
         {
-            state = Constants.ST_BOOST;
+            // state = Constants.ST_BOOST;
+            variable |= Constants.BV_IsBoost;
             
         }
 
@@ -169,8 +179,11 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
         ///////////////////////////////////////////////// 스페이스바 뗄 때
         if (Input.GetKeyUp(KeyCode.Space))//(Input.GetMouseButtonUp(0))
         {
+            variable &= ~(Constants.BV_IsBoost);//isBoost = false;
             if (fStamina < 10)
-                variable &= ~(Constants.BV_CheckBoost);//bCheckBoost = false;
+            {
+                variable &= ~(Constants.BV_bBoost); //bCheckBoost = false;
+            }
         }
         ///////////////////////////////////////////////// 마우스 왼쪽 뗄 때 
 
@@ -206,27 +219,45 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
         }
     }
 
-    private void Action()
+    private void Action()   // 플레이어 모델이 직접 움직이지는 않으나, 속도변경 같은 코드가 들어감. State의 상태는 여기서만 바뀌게 된다.
     {
-        //ulong mask = 0;
+        state = Constants.ST_FLYING;
+
+        // if(((variable & Constants.BV_IsBoost) > 0))
+        //   state = Constants.ST_BOOST;
+        if (Boost()) // 붙어있는 경우도 추가해야할 듯 
+            state = Constants.ST_BOOST;
+
+
+        if ((variable & Constants.BV_IsCling) > 0)//isCling)
+            state = Constants.ST_CLING;
+
+        if ((variable & Constants.BV_bStun) > 0)
+        {
+            state = Constants.ST_STUN;
+           // fXAngle = 0f;
+           // fYAngle = 0f;
+        }
+
+        //ulong mask = 0;s
 
         // Boost인지 아닌지 체크 
-       // mask = (state & Constants.ST_BOOST);
-        if (state == Constants.ST_BOOST)//(mask) > 0)
-        {
-            Boost(true);
-        }
-        else
-            Boost(false);
-
-       // mask = (state & Constants.ST_WALLCOLLISION);
+        // mask = (state & Constants.ST_BOOST);
+        /*   if (state == Constants.ST_BOOST)//(mask) > 0)
+           {
+               Boost(true);
+           }
+           else
+               Boost(false);
+               */
+        // mask = (state & Constants.ST_WALLCOLLISION);
         // if ((mask) > 0)
         //   StartCoroutine()
 
-      //  if ( true == isInRainzone && ((variable & Constants.BV_bCling) > 0)  )//true == bCling ) // RainZone안에서 물방울을 클릭한 상태라면
+        //  if ( true == isInRainzone && ((variable & Constants.BV_bCling) > 0)  )//true == bCling ) // RainZone안에서 물방울을 클릭한 상태라면
         //    fSpeed = 40f;
 
-         if (true == isInRainzone && ( (variable & Constants.BV_bCling) > 0 )   )// true == bCling )//&& false == isCling ) // rainzone 안에 있고, 빗방울에  붙으려고 할 때 
+        if (true == isInRainzone && ( (variable & Constants.BV_bCling) > 0 )   )// true == bCling )//&& false == isCling ) // rainzone 안에 있고, 빗방울에  붙으려고 할 때 
         {
             fSpeed = 40f;
 
@@ -247,12 +278,12 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
             }
         }
     }
-    private void Boost(bool _bool)
+    private bool Boost()
     {
-        if ((_bool) && (fStamina > fStaminaMinus) && ((variable & Constants.BV_CheckBoost) > 0))//(bCheckBoost)) // _bool 이 true 일때 - 마우스가 클릭상태일때 이면서 , 현재 스테가 스테미나 감소량보다 크고, Boost가 가능할 때 
+        if (((variable & Constants.BV_bCollisionOthers) == 0) && ((variable & Constants.BV_IsBoost) > 0) &&(fStamina > fStaminaMinus) && ((variable & Constants.BV_bBoost) > 0))//(bCheckBoost)) // 충돌하지 않았고, (_bool 이 true 일때 - 마우스가 클릭상태일때 이면서 , )현재 스테가 스테미나 감소량보다 크고, Boost가 가능할 때 
         {
             fStamina -= fStaminaMinus;
-            state = Constants.ST_BOOST;
+            //state = Constants.ST_BOOST;
             //isBoost = true;
             // 가속도 조절
             fBoostVal += 50f * Time.deltaTime;
@@ -263,14 +294,15 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
             if (fStamina < 1)               // 스테미나가 1 이하로 떨어지면 부스터를 사용할 수 없다 
             {
                 fStamina = 1;
-                variable &= ~(Constants.BV_CheckBoost); //bCheckBoost = false;
-             //   state = Constants.ST_FLYING;
+                variable &= ~(Constants.BV_bBoost); //bCheckBoost = false;
+                                                    //   state = Constants.ST_FLYING;
             }
+                return true;
         }
         else
         {
             fStamina += 0.1f;
-           // state = Constants.ST_FLYING;
+            // state = Constants.ST_FLYING;
             //state = Constants.ST_BOOST;
             //isBoost = false;
             // 가속도 조절
@@ -284,33 +316,26 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
             fSpeed = fBoostVal + fOwnSpeed;
 
             if (fStamina > 10f)      // 스테미나가 10이상이면 사용가능
-                variable |= Constants.BV_CheckBoost;//bCheckBoost = true;
+                variable |= Constants.BV_bBoost;//bCheckBoost = true;
+
+            return false;
         }
 
     }
 
-    private void Move()     // 일단은 키보드 움직임에 따라서 각도가 변하고, 앞으로 가는것은 자동 
+    private void Move()     // 실제 플레이어 객체가 움직이는 코드가 들어있다 
     {
-        //# if UNITY_IOS
-       //  fXAngle = Input.acceleration.x * 1.5f;      // fYRotation : 좌우 각도 변경  
-         // fYAngle = -(Input.acceleration.y * 1.5f) - 0.5f;    // fXRotatino : 상하 각도 변경 , 0.4 는 각도 좀더 세울수 있게 마이너스 한것      
-        //  #else
-          fXAngle = Input.GetAxis("Horizontal");
-         fYAngle = Input.GetAxis("Vertical");
-        //#endif
+  
 
-        if ((-0.15f < fXAngle) && (fXAngle < 0.15f))
-            fXAngle = 0f;
-        if ((-0.1f < fYAngle) && (fYAngle < 0.15f))
-            fYAngle = 0f;
-        //  tr.Rotate((Vector3.up * fYRotation * Time.deltaTime * fRotSpeed) + (tr.right * -fXRotation * Time.deltaTime * fRotSpeed) , Space.World);
-
-
-
-        if ( (state == Constants.ST_IDLE) || (variable & Constants.BV_Stick)>0 ) // ||  isStick 
+        if ( (state == Constants.ST_IDLE) || (variable & Constants.BV_Stick) > 0 ) // ||  isStick 
         {
-            
-            
+        }
+        else if( (state == Constants.ST_STUN) )
+        {
+            rigidBody.MovePosition(tr.position + (-Vector3.up * Time.deltaTime));
+
+
+        
         }
         else if (true == isInRainzone   && (Constants.ST_CLING != state) && ((variable & Constants.BV_ClickRaindrop)>0 ) && ((variable & Constants.BV_bCling) > 0))// false == isCling && isClickRaindrop && true == bCling )//null != dest_Raindrop) // rainzone 안에 있고, 빗방울에  붙으려고 할 때 
         {
@@ -319,6 +344,7 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
         }
         else if (!(Constants.ST_CLING == state))//!isCling)  // 붙어있지 않다면 움직이게 함
         {
+           
             // 회전 
             tr.Rotate(Vector3.up * fXAngle * Time.deltaTime * fRotSpeed, Space.World);
             tr.Rotate(Vector3.right * -fYAngle * Time.deltaTime * fRotSpeed, Space.Self);
@@ -336,7 +362,7 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
             // tr.Rotate(Vector3.right * -fYAngle * Time.deltaTime * fRotSpeed, Space.Self);
         }
         // 지금 구현해야 하는것 : rainzone에 들어와 있으면서 , 빗방울 클릭시 -> 이동방향이 정해지고 , 방향변경은 가능하게 ( 방향변경을 해도 이동방향은 변함이 없다) 
-        Debug.DrawRay(tr.transform.position, Vector3.up * 100.0f, Color.red);
+       // Debug.DrawRay(tr.transform.position, Vector3.up * 100.0f, Color.red);
     }
 
 
@@ -357,64 +383,8 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
     }
 
 
-    void OnCollisionEnter(Collision coll)
-    {
-        variable &= ~(Constants.BV_ClickRaindrop);//isClickRaindrop = false;
+    
 
-        if (state == Constants.ST_BOOST)    //부스터 사용중 어딘가에 충돌하면 부스터 사용 취소 
-            state = Constants.ST_FLYING;
-
-        if (coll.gameObject.tag == "WALL" || coll.gameObject.tag == "RAINDROP") // 벽이나 물방울이면 붙게한다 
-        {
-            if ( (variable & Constants.BV_bCling) > 0 )//bCling)  // 붙으려고 하는 상태면 
-            {
-                if (Player_dest.gameObject == coll.gameObject)    // 충돌한 물체가 목표물과 같다면 달라붙는다 -- 벽이 여기서 에러 
-                {
-                    variable |= Constants.BV_IsCling;//isCling = true;
-                    //State = 
-                    ClingObj.transform.parent = coll.transform;
-                    tr.transform.parent = ClingObj.transform;
-                    state = Constants.ST_CLING;
-                }
-                else    // 충돌한 물체가 목표물과 다르다면 붙으려고 하는 상태 해제됨
-                {
-                    //isCling = false;
-                    // state = Constants.ST_FLYING;
-                    variable &= ~(Constants.BV_bCling);//bCling = false;
-                }
-
-            }
-            else    // 벽이나 물방울에 붙지 않는 상태인데 일정속도 이상으로 부딪히면 충돌효과를 준다 
-            {
-                // 충돌효과 코드 좀더 수정필요, 속도도 수정 필요  
-                if (fSpeed > fOwnSpeed + 3f) // _fPower > fPower 도 포함시켜야함 - confused가 되는 상황? 
-                    StartCoroutine("StartConfused");
-            }
-        }
-        else
-            variable &= ~(Constants.BV_bCling);//bCling = false;
-
-        if (coll.gameObject.tag == "FROG_TONGUE")
-        {
-            variable |= Constants.BV_Stick;//isStick = true;
-
-            ClingObj.transform.parent = coll.transform;
-            tr.transform.parent = ClingObj.transform;
-            //tr.transform.position = coll.gameObject.transform.position; // 일단 개구리의 위치에 맞추긴 했는데 삐져나옴 
-
-            rigidBody.velocity = Vector3.zero;
-            rigidBody.isKinematic = true;   // 물리적인 영향을 끔 
-
-        }
-    }
-
-    private IEnumerator StartConfused() // 캐릭터의 상태를 3초간 confused로 바꿔주는 함수
-    {
-        variable |= Constants.BV_Confused;//isConfused = true;
-        yield return new WaitForSeconds(3f);
-
-        variable &= ~(Constants.BV_Confused);//isConfused = false;
-    }
 
     // 플레이어가 어딘가에 붙어있다면 붙지 않은 상태로 만들어주는 함수
     public void SetState_NotCling()
@@ -462,6 +432,20 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
         }
     }
 
+    private void MakeParentNull()
+    {
+
+    }
+
+
+    private IEnumerator StartConfused() // 캐릭터의 상태를 3초간 confused로 바꿔주는 함수
+    {
+        variable |= Constants.BV_bStun;//isConfused = true;
+        yield return new WaitForSeconds(1f);
+
+        variable &= ~(Constants.BV_bStun);//isConfused = false;
+    }
+
     private IEnumerator ChangeSlowVal()
     {
         //  if (true == isCanSlow)  // 키입력으로 인해 이미 변수상태가 변경된 상태라면 코루틴 꺼줌
@@ -479,6 +463,73 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
         variable |= Constants.BV_IsCanSlow;//isCanSlow = true;
     }
 
+    void OnCollisionEnter(Collision coll)
+    {
+        // 코드정리 필요 
+        if (coll.gameObject != null)
+        {
+            variable &= ~(Constants.BV_ClickRaindrop);//isClickRaindrop = false;
+           //
+        }
+        if (coll.gameObject.tag == "WALL" || coll.gameObject.tag == "RAINDROP") // 벽이나 물방울이면 붙게한다 
+        {
+            if ((variable & Constants.BV_bCling) > 0)//bCling)  // 붙으려고 하는 상태면 
+            {
+                if (Player_dest.gameObject == coll.gameObject)    // 충돌한 물체가 목표물과 같다면 달라붙는다 -- 벽이 여기서 에러 
+                {
+                    variable |= Constants.BV_IsCling;//isCling = true;
+                    //State = 
+                    ClingObj.transform.parent = coll.transform;
+                    tr.transform.parent = ClingObj.transform;
+                    //variable 
+                    //state = Constants.ST_CLING;
+                }
+                else    // 충돌한 물체가 목표물과 다르다면 붙으려고 하는 상태 해제됨
+                {
+                    //isCling = false;
+                    // state = Constants.ST_FLYING;
+                    variable &= ~(Constants.BV_bCling);//bCling = false;
+                }
+
+            }
+            else    // 벽이나 물방울에 붙지 않는 상태인데 일정속도 이상으로 부딪히면 충돌효과를 준다 
+            {
+                // 충돌효과 코드 좀더 수정필요, 속도도 수정 필요  
+                if (fSpeed > fOwnSpeed + 3f) // _fPower > fPower 도 포함시켜야함 - confused가 되는 상황? 
+                    StartCoroutine("StartConfused");
+            }
+        }
+        else
+            variable &= ~(Constants.BV_bCling);//bCling = false;
+
+        if (coll.gameObject.tag == "FROG_TONGUE")
+        {
+            variable |= Constants.BV_Stick;//isStick = true;
+
+            ClingObj.transform.parent = coll.transform;
+            tr.transform.parent = ClingObj.transform;
+            //tr.transform.position = coll.gameObject.transform.position; // 일단 개구리의 위치에 맞추긴 했는데 삐져나옴 
+
+            rigidBody.velocity = Vector3.zero;
+            rigidBody.isKinematic = true;   // 물리적인 영향을 끔 
+
+        }
+    }
+    
+    void OnTriggerEnter(Collider coll)
+    {
+        if (coll.gameObject != null)
+        {
+            variable |= (Constants.BV_bCollisionOthers);   // 충돌했음을 알림 
+        }
+     
+
+    }
+
+    void OnTriggerExit(Collider coll)
+    {
+          variable &= ~(Constants.BV_bCollisionOthers);   // 다른물체와 충돌하지 않음으로 상태를 바꿈 
+    }
 
     // 부모자식관계를 만들어주거나 해제시켜주는 함수 필요 
     // 레이어 확인해서 붙을 수 있는앤지 없는지 확인하는 코드 필요 

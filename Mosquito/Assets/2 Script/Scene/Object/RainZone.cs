@@ -82,8 +82,7 @@ IEnumerator CreateRaindrop()
                 if (raindropList[i].activeSelf == false) // 활성화 되지 않은 물방울이면 활성화
                 {
                     int randomIdx = Random.Range(1, rainPoints.Length);
-                    print("i = " + i + ", randomIdx = " + randomIdx );
-                    print("ARR : " + Arr[0] + ", " + Arr[1] +", " + Arr[2]);
+
 
                     if (randomIdx == Arr[0] || randomIdx == Arr[1] || randomIdx == Arr[2])   // 이전에 빗방울이 생성된곳과 위치가 같다면 빠져나감 .. for문으로 만들면 좋은데 
                         break;
@@ -97,7 +96,6 @@ IEnumerator CreateRaindrop()
                     ++index;
                     if (index > MAXINDEX - 1)
                         index = 0;
-
             
                     break;  // FOR문을 빠져나가게 되면 waitforsecond를 하게 됨 
                 }
