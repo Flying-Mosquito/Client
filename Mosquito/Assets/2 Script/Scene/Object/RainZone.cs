@@ -4,22 +4,28 @@ using System.Collections.Generic;   // List 사용을 위해 추가
 
 // Trigger, RainDrop들을 생성하고 List를 가지고 있다.
 public class RainZone : MonoBehaviour {
-
+    
     private PlayerCtrl _Player;
     public GameObject RainDropPrefab;
-    private int iMaxRainDrop = 15; // 풀에 넣을 빗방울 수    
+    private int iMaxRainDrop = 15;          // 풀에 넣을 빗방울 수    
     public List<GameObject> raindropList = new List<GameObject>();
     private Transform[] rainPoints;
     private float fTime;
-    
+
+    private int MAXINDEX = 3;    // 중복된 곳에서 빗방울이 내려오지 않게 도와줄 변수 
+    private int[] Arr = { };// = new int[3];             // iMaxIndex와 같은 숫자로 넣어주세요. 이전에 빗방울이 떨어진 위치를 저장하는 변수 
+    private int index = 0;
 
     void Awake()
     {
         // RainDropPrefab = Resources.Load("RainDrop");//.Find("RainDrop"); // 로드에 문제있으면 이거 찾아봐야돼ㅠㅠ
 
+        Arr = new int[MAXINDEX];
+    
+
         _Player = GameObject.Find("Player").GetComponent<PlayerCtrl>(); //PlayerCtrl.Instance;//
         rainPoints = gameObject.GetComponentsInChildren<Transform>();
-
+        
         for (int i = 0; i < iMaxRainDrop; ++i)  // 풀에넣을 빗방울들을 만들고 리스트에 넣어줌 
         {
             GameObject rainDrop = (GameObject)Instantiate(RainDropPrefab);
@@ -30,12 +36,12 @@ public class RainZone : MonoBehaviour {
 
         fTime = 0.1f;
        // print("Awake 넘어갑니다");
-
+       
 
     }
 
     void Start() {
-
+        Random.seed = System.Environment.TickCount;
     }
 
     // Update is called once per frame
@@ -75,19 +81,27 @@ IEnumerator CreateRaindrop()
             {
                 if (raindropList[i].activeSelf == false) // 활성화 되지 않은 물방울이면 활성화
                 {
+                    int randomIdx = Random.Range(1, rainPoints.Length);
+                    print("i = " + i + ", randomIdx = " + randomIdx );
+                    print("ARR : " + Arr[0] + ", " + Arr[1] +", " + Arr[2]);
+
+                    if (randomIdx == Arr[0] || randomIdx == Arr[1] || randomIdx == Arr[2])   // 이전에 빗방울이 생성된곳과 위치가 같다면 빠져나감 .. for문으로 만들면 좋은데 
+                        break;
+
+                    
                     raindropList[i].SetActive(true);
+                    raindropList[i].transform.position = rainPoints[randomIdx].transform.position;
 
-                    int idx = Random.Range(1, rainPoints.Length);
+                    Arr[index] = randomIdx;
 
+                    ++index;
+                    if (index > MAXINDEX - 1)
+                        index = 0;
 
-                    raindropList[i].transform.position = rainPoints[idx].transform.position;
-
-                    break;
-                   // print("호출");
+            
+                    break;  // FOR문을 빠져나가게 되면 waitforsecond를 하게 됨 
                 }
             }
-          
         }
     }
-
 }

@@ -20,7 +20,7 @@ public class RainDrop : MonoBehaviour {
         //col = GetComponent<Collider>();
         bCheck = false;
         rigidBody = GetComponent<Rigidbody>();
-        vGravity = new Vector3(0f, -9.8f, 0f);
+        vGravity = new Vector3(0f, -17f, 0f);
 
        // isCollision = false;
         isPlop = false;

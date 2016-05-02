@@ -105,7 +105,7 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
         RotateAnimation();  // 플레이어 몸체 회전효과
         rigidBody.velocity = Vector3.zero;  // 이것도 해제해야 할 거야 
 
-
+        print("fStamina : " + fStamina);
       // print("STATE : " + state); // 플레이어 상태확인 
     }
 
@@ -162,15 +162,17 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
         if( Input.GetKey(KeyCode.Space))
         {
             state = Constants.ST_BOOST;
+            
         }
 
 
-        ///////////////////////////////////////////////// 마우스 왼쪽 뗄 때 
-        if (Input.GetMouseButtonUp(0))
+        ///////////////////////////////////////////////// 스페이스바 뗄 때
+        if (Input.GetKeyUp(KeyCode.Space))//(Input.GetMouseButtonUp(0))
         {
             if (fStamina < 10)
                 variable &= ~(Constants.BV_CheckBoost);//bCheckBoost = false;
         }
+        ///////////////////////////////////////////////// 마우스 왼쪽 뗄 때 
 
 
         ///////////////////////////////////////////////// 마우스 오른쪽 클릭
@@ -290,14 +292,20 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
     private void Move()     // 일단은 키보드 움직임에 따라서 각도가 변하고, 앞으로 가는것은 자동 
     {
         //# if UNITY_IOS
-       //  fXAngle = Input.acceleration.x;      // fYRotation : 좌우 각도 변경  
-        //  fYAngle = -Input.acceleration.y - 0.4f;    // fXRotatino : 상하 각도 변경 , 0.4 는 각도 좀더 세울수 있게 마이너스 한것      
+       //  fXAngle = Input.acceleration.x * 1.5f;      // fYRotation : 좌우 각도 변경  
+         // fYAngle = -(Input.acceleration.y * 1.5f) - 0.5f;    // fXRotatino : 상하 각도 변경 , 0.4 는 각도 좀더 세울수 있게 마이너스 한것      
         //  #else
-        fXAngle = Input.GetAxis("Horizontal");
-        fYAngle = Input.GetAxis("Vertical");
+          fXAngle = Input.GetAxis("Horizontal");
+         fYAngle = Input.GetAxis("Vertical");
         //#endif
 
+        if ((-0.15f < fXAngle) && (fXAngle < 0.15f))
+            fXAngle = 0f;
+        if ((-0.1f < fYAngle) && (fYAngle < 0.15f))
+            fYAngle = 0f;
         //  tr.Rotate((Vector3.up * fYRotation * Time.deltaTime * fRotSpeed) + (tr.right * -fXRotation * Time.deltaTime * fRotSpeed) , Space.World);
+
+
 
         if ( (state == Constants.ST_IDLE) || (variable & Constants.BV_Stick)>0 ) // ||  isStick 
         {
@@ -332,7 +340,7 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
     }
 
 
-    private void RotateAnimation()
+    private void RotateAnimation()  // 플레이어모델이 회전할때 대각선으로 기울어진 느낌을 주도록 한다 
     {
         /*  for (int i = 1; i < tr_Mesh.Length; ++i)
               {
@@ -344,7 +352,7 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
      */
         // tr_Mesh[1].localRotation = Quaternion.Euler((Vector3.up * fXAngle * 20.0f)
         //                                 + (Vector3.right * -fYAngle * 20.0f));
-        tr_Mesh[1].localRotation = Quaternion.Euler(-fYAngle * 20.0f, 0f
+        tr_Mesh[1].localRotation = Quaternion.Euler(-fYAngle * 20.0f, fXAngle * 5f//0f
                                         , (-fXAngle * 20.0f));
     }
 
@@ -352,6 +360,10 @@ public class PlayerCtrl : Singleton<PlayerCtrl>//MonoBehaviour
     void OnCollisionEnter(Collision coll)
     {
         variable &= ~(Constants.BV_ClickRaindrop);//isClickRaindrop = false;
+
+        if (state == Constants.ST_BOOST)    //부스터 사용중 어딘가에 충돌하면 부스터 사용 취소 
+            state = Constants.ST_FLYING;
+
         if (coll.gameObject.tag == "WALL" || coll.gameObject.tag == "RAINDROP") // 벽이나 물방울이면 붙게한다 
         {
             if ( (variable & Constants.BV_bCling) > 0 )//bCling)  // 붙으려고 하는 상태면 

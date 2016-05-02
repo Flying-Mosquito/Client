@@ -8,7 +8,7 @@ public class FollowCam : MonoBehaviour {
     public PlayerCtrl _Player;
 
     private Transform   tr;
-    public  Transform   targetTr;
+    //public  Transform   targetTr;   //Player Tr
     public  Transform   CamPivot; //private
     private float Target_fXAngle;    // 카메라를 좌우로 흔들기 위한 값
     public float Target_fYAngle;    // 카메라를 상하로 흔들기 위한 값 (?)이게 필요한가 
@@ -40,7 +40,7 @@ public class FollowCam : MonoBehaviour {
         fDampTrace = 20.0f;
 
         // 카메라를 상하좌우로 흔들기 위한 캐릭터 기울기값
-        _Player = GameObject.Find("Player").GetComponent<PlayerCtrl>();// PlayerCtrl.Instance;//GameManager.Instance.PlayerCtrl;//GameObject.Find("Player").GetComponent<Player>();
+        _Player = PlayerCtrl.Instance;//GameObject.Find("Player").GetComponent<PlayerCtrl>();// PlayerCtrl.Instance;//GameManager.Instance.PlayerCtrl;//GameObject.Find("Player").GetComponent<Player>();
 
         Target_fXAngle = _Player.fXAngle;
         Target_fYAngle = _Player.fYAngle;
@@ -68,8 +68,9 @@ public class FollowCam : MonoBehaviour {
         // Target_fSpeed = Player.fSpeed;
         
             Target_fSpeed = _Player.fSpeed * 0.08f;
- 
-        tr.position = Vector3.Lerp(tr.position, (targetTr.position + (-targetTr.forward * fDist )) + (targetTr.up * fHeight), fDampTrace * Time.deltaTime);
+
+        tr.position = Vector3.Lerp(tr.position, (_Player.transform.position + (-_Player.transform.forward * fDist)) + (_Player.transform.up * fHeight), fDampTrace * Time.deltaTime);
+        //tr.position = Vector3.Lerp(tr.position, (targetTr.position + (-targetTr.forward * fDist )) + (targetTr.up * fHeight), fDampTrace * Time.deltaTime);
         Move_RightLeft();     // 카메라효과 - 좌우로 움직이기 
         Shake_Camera();
       
@@ -81,9 +82,8 @@ public class FollowCam : MonoBehaviour {
         // tr.localPosition = Vector3.Lerp(tr.localPosition, new Vector3(Target_fXAngle *4f, 0.2f, -3f), 0.03f);
         //    tr.localPosition = Vector3.Lerp(FirstLocalPosition * Target_fSpeed , FirstLocalPosition + new Vector3(Target_fXAngle * 4f, 0.2f, -0.5f), 0.15f);
         tr.localPosition = Vector3.Lerp(FirstLocalPosition
-            , FirstLocalPosition + new Vector3(Target_fXAngle * 4f, 0.2f, -Target_fSpeed * 2f) 
-            , 0.15f);
-
+                                        , FirstLocalPosition + new Vector3(Target_fXAngle * 3f, 0.2f, -Target_fSpeed * 2f) 
+                                         , 0.15f);
     }
  
      public void Shake_Camera()
