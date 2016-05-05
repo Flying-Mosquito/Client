@@ -7,7 +7,6 @@ public class PlayerPoint : MonoBehaviour {
     void Awake()
     {
        PlayerCtrl.Instance.SetTransform(transform.position, transform.rotation);
-        PlayerCtrl.Instance.SetStateIdle(false);
         //SetPlayerSetTransform();
         //if (null == GameManager.Instance.Player.name)
         //    print("플레이어는 널이래");
@@ -20,7 +19,14 @@ public class PlayerPoint : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
-	}
+        if (Input.GetMouseButtonDown(0))
+        {
+            PlayerCtrl.Instance.SetStateIdle(false);
+            gameObject.SetActive(false);    //비활성화 
+        }
+
+       
+
+    }
     
 }
