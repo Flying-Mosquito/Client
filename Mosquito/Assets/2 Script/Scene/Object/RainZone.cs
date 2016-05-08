@@ -54,7 +54,7 @@ public class RainZone : MonoBehaviour {
         if ("PLAYER" == coll.gameObject.tag)
         {
             //_Player.isInRainzone = true;
-            PlayerCtrl.Instance.isInRainzone = true;
+          //  PlayerCtrl.Instance.isInRainzone = true;
             StartCoroutine("CreateRaindrop");
         }
 
@@ -65,7 +65,7 @@ public class RainZone : MonoBehaviour {
         if("PLAYER" == coll.gameObject.tag)
         {
             //_Player.isInRainzone = false;
-            PlayerCtrl.Instance.isInRainzone = false;
+         //   PlayerCtrl.Instance.isInRainzone = false;
             StopCoroutine("CreateRaindrop");
         }
     }
